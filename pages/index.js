@@ -7,7 +7,7 @@ const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [evolvePosts, setEvolvePosts] = useState([]);
 
-  const API_SERVER_URL = 'localhost:8000';
+  const API_SERVER_URL = 'http://localhost:8000';
   const endpoint = 'evolve-posts';
 
   useEffect(() => {
@@ -15,11 +15,11 @@ const Index = () => {
 
     const fetchDataAsync = async () => {
       try {
-        const postsByType = await getPosts(API_SERVER_URL, endpoint);
+        const posts = await getPosts(API_SERVER_URL, endpoint);
 
         if (mounted) {
           setIsLoaded(true);
-          setEvolvePosts(postsByType[pageEndpoints[0]]);
+          setEvolvePosts(posts);
         }
       } catch (err) {
         setError(err);
@@ -45,22 +45,29 @@ const Index = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Get ready to evolve. Test your your new API!
+          Get ready to evolve. <br/>Test your new API!
         </h1>
-        {evolvePosts ? (
+        {evolvePosts.length > 0 ? (
+          <>
+            <h2>
+              {`You have ${evolvePosts.length} ${evolvePosts.length === 1 ? 'post' : 'posts'} from your Evolve custom post type:`}
+            </h2>
+            <ul>
+              {
+                evolvePosts.map((post) => (
+                  <li key={post.id}>
+                    <h3>
+                      {post.title.rendered}
+                    </h3>
+                  </li>
+                ))
+              }
+            </ul>   
+          </>
+        ) : (
           <p>
             Go add a new Evolve post in the CMS and refresh this page to see it appear here!
           </p>
-        ) : (
-          <ul>
-            {
-              evolvePosts.map((post) => (
-                <li>
-                  {post.title.rendered}
-                </li>
-              ))
-            }
-          </ul>
         )}
       </main>
     </div>
